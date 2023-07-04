@@ -235,61 +235,41 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <script>
+        function onScanSuccess(decodedText, decodedResult) {
+            // $('#result').val(decodedText);
+            console.log(`Scan code:`, decodedText)
 
-    function onScanSuccess(decodedText, decodedResult) {
-        // $('#result').val(decodedText);
-        
-        fetch('/scan-qrcode', {
-            method: 'POST',
-            body: JSON.stringify({ qr_code: decodedText }),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: "same-origin"
-        })
+            const xhr = new XMLHttpRequest()
+            xhr.open('POST', '/scan-qrcode', false)
+            xhr.setRequestHeader('Content-Type', 'application/json')
+            xhr.withCredentials = true
 
-	.then((response) => {
-		if (response.ok) {
-           Swal.fire({
-            title: 'Silahkan masuk, anda terdaftar dalam undangan',
-            icon: 'success',
-            timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
-            showConfirmButton: true // Menyembunyikan tombol OK
-        });
-    } else {
-        Swal.fire({
-            title: 'Mohon maaf, anda tidak terdaftar dalam undangan',
-            icon: 'error',
-            timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
-            showConfirmButton: true // Menyembunyikan tombol OK
-        });
-    }
-    
-	})
-		.catch((error) => {
-			// Disini Client error atau Server error
-			console.log(error)
-		})
-    }
+            xhr.send(JSON.stringify({ qr_code: decodedText }))
 
-    function onScanFailure(error) {
-        console.warn(`QR error = ${error}`)
-    }
+            if (xhr.status === 200) {
+                Swal.fire({
+                    title: 'Silahkan masuk, anda terdaftar dalam undangan',
+                    icon: 'success',
+                    timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
+                    showConfirmButton: true // Menyembunyikan tombol OK
+                });
+            } else {
+                Swal.fire({
+                    title: 'Mohon maaf, anda tidak terdaftar dalam undangan',
+                    icon: 'error',
+                    timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
+                    showConfirmButton: true // Menyembunyikan tombol OK
+                });
+            }
+        }
 
-    const scanner = new Html5QrcodeScanner(
-	'reader',
-	{
-		fps: 10,
-		qrbox: { width: 250, height: 250 },
-	},
+        function onScanFailure(error) {
+            console.warn(`QR error = ${error}`)
+        }
 
-	false
-)
-
-    scanner.render(onScanSuccess, onScanFailure)
-    
+        const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 250, height: 250 }}, false)
+        scanner.render(onScanSuccess, onScanFailure)
     </script>
-
     
 </body>
 
