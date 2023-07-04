@@ -235,40 +235,48 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <script>
+        let lastScanTime = 0; // Menyimpan waktu terakhir QR code dipindai
+
         function onScanSuccess(decodedText, decodedResult) {
-            // $('#result').val(decodedText);
-            console.log(`Scan code:`, decodedText)
+            console.log(`Scan code:`, decodedText);
 
-            const xhr = new XMLHttpRequest()
-            xhr.open('POST', '/scan-qrcode', false)
-            xhr.setRequestHeader('Content-Type', 'application/json')
-            xhr.withCredentials = true
+            const now = new Date().getTime(); // Mendapatkan waktu sekarang dalam milidetik
 
-            xhr.send(JSON.stringify({ qr_code: decodedText }))
+            // Cek apakah telah 3 detik sejak pemindaian terakhir
+            if (now - lastScanTime >= 3000) {
+                lastScanTime = now; // Perbarui waktu terakhir QR code dipindai
 
-            if (xhr.status === 200) {
-                Swal.fire({
-                    title: 'Silahkan masuk, anda terdaftar dalam undangan',
-                    icon: 'success',
-                    timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
-                    showConfirmButton: true // Menyembunyikan tombol OK
-                });
-            } else {
-                Swal.fire({
-                    title: 'Mohon maaf, anda tidak terdaftar dalam undangan',
-                    icon: 'error',
-                    timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
-                    showConfirmButton: true // Menyembunyikan tombol OK
-                });
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/scan-qrcode', false);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.withCredentials = true;
+
+                xhr.send(JSON.stringify({ qr_code: decodedText }));
+
+                if (xhr.status === 200) {
+                    Swal.fire({
+                        title: 'Silahkan masuk, anda terdaftar dalam undangan',
+                        icon: 'success',
+                        timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
+                        showConfirmButton: true // Menyembunyikan tombol OK
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Mohon maaf, anda tidak terdaftar dalam undangan',
+                        icon: 'error',
+                        timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
+                        showConfirmButton: true // Menyembunyikan tombol OK
+                    });
+                }
             }
         }
 
         function onScanFailure(error) {
-            console.warn(`QR error = ${error}`)
+            console.warn(`QR error = ${error}`);
         }
 
-        const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 250, height: 250 }}, false)
-        scanner.render(onScanSuccess, onScanFailure)
+        const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: { width: 250, height: 250 }}, false);
+        scanner.render(onScanSuccess, onScanFailure);
     </script>
     
 </body>
