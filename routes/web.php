@@ -20,4 +20,6 @@ Route::get('/', function () {
 
 Route::get('/users', [UserController::class, 'index']);
 
+Route::get('/kehadiran', [UserController::class, 'kehadiran']);
+
 Route::post('/scan-qrcode', [UserController::class, 'scan'])->name('scan-qrcode');

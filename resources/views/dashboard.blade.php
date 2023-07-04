@@ -64,9 +64,9 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Users</h6>
-                        <a class="collapse-item" href="/users">Users</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
+                        <h6 class="collapse-header">Undangan</h6>
+                        <a class="collapse-item" href="/users">Tamu Undangan</a>
+                        <a class="collapse-item" href="/kehadiran">Kehadiran</a>
                     </div>
                 </div>
             </li>
@@ -166,10 +166,6 @@
 
                 </div>
                 <div class="row">
-                <div class="col-4">
-                    <div id="reader" width="600px"></div>
-                </div>
-
                 <div class="col-4">
                     {{-- <input type="text" style="width:400px; height:150px;" id="result" name="qr_code"> --}}
                 </div>

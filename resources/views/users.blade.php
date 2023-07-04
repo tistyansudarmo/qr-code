@@ -1,7 +1,8 @@
 @extends('dashboard')
 
 @section('container')
-    <table class="table table-striped">
+  <h1 class="h3 mb-4 text-gray-800">Daftar Tamu Undangan</h1>
+    <table class="table table-striped table-hover">
   <thead>
     <tr>
       <th scope="col">No</th>
@@ -11,10 +12,10 @@
     </tr>
   </thead>
   <tbody>
+    @foreach ($user as $users)
     <tr>
-      @foreach ($user as $users)
           
-      <th scope="row">1</th>
+      <th scope="row">{{ $loop->iteration }}</th>
       <td>
       <div class="visible-print">
       {!! QrCode::size(100)->generate($users->qr_code); !!}
@@ -26,5 +27,8 @@
     </tr>
   </tbody>
 </table>
+ <div class="col-4">
+    <div id="reader" width="600px"></div>
+  </div>
 
 @endsection
