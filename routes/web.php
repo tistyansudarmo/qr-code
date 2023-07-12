@@ -22,4 +22,8 @@ Route::get('/users', [UserController::class, 'index']);
 
 Route::get('/kehadiran', [UserController::class, 'kehadiran']);
 
+Route::get('/qr-code', [UserController::class, 'qrcode']);
+
 Route::post('/scan-qrcode', [UserController::class, 'scan'])->name('scan-qrcode');
+
+Route::get('/undangan/{nama}', [UserController::class, 'undangan']);

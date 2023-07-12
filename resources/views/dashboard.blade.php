@@ -33,7 +33,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
                 <div class="sidebar-brand-text mx-3">Invitation</div>
             </a>
 
@@ -59,7 +59,7 @@
             <li class="nav-item {{ Request::is('users') ? 'active' : ''}}">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-user"></i>
                     <span>Users</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -71,8 +71,17 @@
                 </div>
             </li>
 
+            <hr class="sidebar-divider my-0">
+
+            <li class="nav-item {{ Request::is('qr-code') ? 'active' : ''}}">
+                <a class="nav-link" href="/qr-code">
+                    <i class="fa fa-qrcode" aria-hidden="true"></i>
+                    <span>Scan QR</span></a>
+            </li>
+            
+
             <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
+            <div class="text-center d-none d-md-inline mt-5">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
 
@@ -242,28 +251,47 @@
             if (now - lastScanTime >= 3000) {
                 lastScanTime = now; // Perbarui waktu terakhir QR code dipindai
 
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', '/scan-qrcode', false);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.withCredentials = true;
-
-                xhr.send(JSON.stringify({ qr_code: decodedText }));
-
-                if (xhr.status === 200) {
+                fetch('/scan-qrcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ qr_code: decodedText })
+                })
+                .then(response => {
+                    if (response.ok) {
+                    return response.json();
+                    } else {
+                    throw new Error('Error in network response');
+                    }
+                })
+                .then(data => {
+                    if (data && data.kehadiran === 'Data user sudah terdaftar di tabel Kehadiran') {
+                    Swal.fire({
+                        title: 'Anda sudah melakukan scan QR Code',
+                        icon: 'warning',
+                        timer: 2000,
+                        showConfirmButton: true
+                    });
+                    } else {
                     Swal.fire({
                         title: 'Silahkan masuk, anda terdaftar dalam undangan',
                         icon: 'success',
-                        timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
-                        showConfirmButton: true // Menyembunyikan tombol OK
+                        timer: 2000,
+                        showConfirmButton: true
                     });
-                } else {
+                    }
+                })
+                .catch(error => {
                     Swal.fire({
                         title: 'Mohon maaf, anda tidak terdaftar dalam undangan',
                         icon: 'error',
-                        timer: 2000, // Menyembunyikan Sweet Alert setelah 2 detik (2000 milidetik)
-                        showConfirmButton: true // Menyembunyikan tombol OK
+                        timer: 2000,
+                        showConfirmButton: true
                     });
-                }
+                });
+                
             }
         }
 

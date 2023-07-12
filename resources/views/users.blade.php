@@ -27,8 +27,5 @@
     </tr>
   </tbody>
 </table>
- <div class="col-4">
-    <div id="reader" width="600px"></div>
-  </div>
 
 @endsection
